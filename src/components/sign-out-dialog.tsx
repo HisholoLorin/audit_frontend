@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useAuthStore } from '@/stores/auth-store'
 import api from '@/lib/api'
@@ -13,10 +12,8 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const { auth } = useAuthStore()
-  const [isLoading, setIsLoading] = useState(false)
 
   const handleSignOut = async () => {
-    setIsLoading(true)
     try {
       // Blacklist the refresh token on the server
       if (auth.refreshToken) {
@@ -25,7 +22,6 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
     } catch {
       // Even if server logout fails, clear local state
     } finally {
-      setIsLoading(false)
       auth.reset()
       const currentPath = location.href
       navigate({

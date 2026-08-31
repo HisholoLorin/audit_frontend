@@ -36,7 +36,7 @@ export function Overview({ data, loading }: OverviewProps) {
           tickFormatter={(value) => `₹${value}`}
         />
         <Tooltip
-          formatter={(value: number) =>
+          formatter={(value: any) =>
             new Intl.NumberFormat('en-IN', {
               style: 'currency',
               currency: 'INR',
