@@ -29,7 +29,7 @@ interface DashboardData {
   monthly_trend: Array<{
     month: string
     total_expenses: number
-    salary: number
+    income: number
   }>
   recent_expenses: Array<{
     id: number
@@ -127,7 +127,7 @@ export function Dashboard() {
                   {loading ? '...' : formatCurrency(data?.closing_balance ?? 0)}
                 </div>
                 <p className='text-xs text-muted-foreground'>
-                  After expenses &amp; credited salary
+                  After expenses &amp; credited income
                 </p>
               </CardContent>
             </Card>
@@ -153,7 +153,7 @@ export function Dashboard() {
             <Card className='col-span-1 lg:col-span-4'>
               <CardHeader>
                 <CardTitle>Monthly Overview</CardTitle>
-                <CardDescription>Expenses vs Salary for the last 6 months</CardDescription>
+                <CardDescription>Expenses vs Income for the last 6 months</CardDescription>
               </CardHeader>
               <CardContent className='ps-2'>
                 <Overview data={data?.monthly_trend ?? []} loading={loading} />

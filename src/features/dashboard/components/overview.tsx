@@ -4,7 +4,7 @@ interface OverviewProps {
   data: Array<{
     month: string
     total_expenses: number
-    salary: number
+    income: number
   }>
   loading: boolean
 }
@@ -46,8 +46,8 @@ export function Overview({ data, loading }: OverviewProps) {
         />
         <Legend />
         <Bar
-          dataKey='salary'
-          name='Salary'
+          dataKey='income'
+          name='Income'
           fill='hsl(var(--primary))'
           radius={[4, 4, 0, 0]}
         />

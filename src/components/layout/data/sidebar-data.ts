@@ -38,8 +38,8 @@ export const sidebarData: SidebarData = {
           icon: Receipt,
         },
         {
-          title: 'Salary',
-          url: '/salary',
+          title: 'Income',
+          url: '/income',
           icon: Wallet,
         },
         {

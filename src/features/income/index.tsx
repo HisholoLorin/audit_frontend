@@ -44,7 +44,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 
-interface Salary {
+interface Income {
   id: number
   amount: number
   month: string
@@ -57,11 +57,11 @@ const formSchema = z.object({
   notes: z.string().optional(),
 })
 
-export function SalaryPage() {
-  const [salaries, setSalaries] = useState<Salary[]>([])
+export function IncomePage() {
+  const [incomes, setIncomes] = useState<Income[]>([])
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [editingSalary, setEditingSalary] = useState<Salary | null>(null)
+  const [editingIncome, setEditingIncome] = useState<Income | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,23 +72,23 @@ export function SalaryPage() {
     },
   })
 
-  const fetchSalaries = useCallback(async () => {
+  const fetchIncomes = useCallback(async () => {
     try {
-      const response = await api.get('/salary/')
-      setSalaries(response.data.results || response.data)
+      const response = await api.get('/income/')
+      setIncomes(response.data.results || response.data)
     } catch {
-      toast.error('Failed to fetch salary data')
+      toast.error('Failed to fetch income data')
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    fetchSalaries()
-  }, [fetchSalaries])
+    fetchIncomes()
+  }, [fetchIncomes])
 
   const handleAddNew = () => {
-    setEditingSalary(null)
+    setEditingIncome(null)
     form.reset({
       amount: '',
       month: new Date().toISOString().slice(0, 7),
@@ -97,23 +97,23 @@ export function SalaryPage() {
     setDialogOpen(true)
   }
 
-  const handleEdit = (salary: Salary) => {
-    setEditingSalary(salary)
+  const handleEdit = (income: Income) => {
+    setEditingIncome(income)
     form.reset({
-      amount: String(salary.amount),
-      month: salary.month.slice(0, 7),
-      notes: salary.notes || '',
+      amount: String(income.amount),
+      month: income.month.slice(0, 7),
+      notes: income.notes || '',
     })
     setDialogOpen(true)
   }
 
   const handleDelete = async (id: number) => {
     try {
-      await api.delete(`/salary/${id}/`)
-      toast.success('Salary entry deleted')
-      fetchSalaries()
+      await api.delete(`/income/${id}/`)
+      toast.success('Income entry deleted')
+      fetchIncomes()
     } catch {
-      toast.error('Failed to delete salary entry')
+      toast.error('Failed to delete income entry')
     }
   }
 
@@ -125,17 +125,17 @@ export function SalaryPage() {
     }
 
     try {
-      if (editingSalary) {
-        await api.put(`/salary/${editingSalary.id}/`, payload)
-        toast.success('Salary updated')
+      if (editingIncome) {
+        await api.put(`/income/${editingIncome.id}/`, payload)
+        toast.success('Income updated')
       } else {
-        await api.post('/salary/', payload)
-        toast.success('Salary added')
+        await api.post('/income/', payload)
+        toast.success('Income added')
       }
       setDialogOpen(false)
-      fetchSalaries()
+      fetchIncomes()
     } catch (error: any) {
-      const msg = error.response?.data?.detail || error.response?.data?.month?.[0] || 'Failed to save salary'
+      const msg = error.response?.data?.detail || error.response?.data?.month?.[0] || 'Failed to save income'
       toast.error(msg)
     }
   }
@@ -151,7 +151,7 @@ export function SalaryPage() {
     <>
       <Header>
         <div className='me-auto'>
-          <h1 className='text-lg font-semibold'>Salary</h1>
+          <h1 className='text-lg font-semibold'>Income</h1>
         </div>
         <ThemeSwitch />
         <ProfileDropdown />
@@ -159,24 +159,24 @@ export function SalaryPage() {
 
       <Main>
         <div className='mb-4 flex items-center justify-between'>
-          <h1 className='text-2xl font-bold tracking-tight'>Monthly Salary</h1>
+          <h1 className='text-2xl font-bold tracking-tight'>Monthly Income</h1>
           <Button onClick={handleAddNew}>
             <Plus className='mr-2 h-4 w-4' />
-            Add Salary
+            Add Income
           </Button>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Salary History</CardTitle>
+            <CardTitle>Income History</CardTitle>
             <CardDescription>Your monthly income records</CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className='text-center py-8 text-muted-foreground'>Loading...</div>
-            ) : salaries.length === 0 ? (
+            ) : incomes.length === 0 ? (
               <div className='text-center py-8 text-muted-foreground'>
-                No salary entries yet. Click "Add Salary" to set your monthly income.
+                No income entries yet. Click "Add Income" to set your monthly income.
               </div>
             ) : (
               <Table>
@@ -189,23 +189,23 @@ export function SalaryPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {salaries.map((salary) => (
-                    <TableRow key={salary.id}>
+                  {incomes.map((income) => (
+                    <TableRow key={income.id}>
                       <TableCell>
-                        {new Date(salary.month).toLocaleDateString('en-IN', {
+                        {new Date(income.month).toLocaleDateString('en-IN', {
                           month: 'long',
                           year: 'numeric',
                         })}
                       </TableCell>
                       <TableCell className='text-right font-medium'>
-                        {formatCurrency(salary.amount)}
+                        {formatCurrency(income.amount)}
                       </TableCell>
                       <TableCell className='text-muted-foreground'>
-                        {salary.notes || '-'}
+                        {income.notes || '-'}
                       </TableCell>
                       <TableCell className='text-right'>
-                        <Button variant='ghost' size='sm' onClick={() => handleEdit(salary)}>Edit</Button>
-                        <Button variant='ghost' size='sm' className='text-destructive' onClick={() => handleDelete(salary.id)}>Delete</Button>
+                        <Button variant='ghost' size='sm' onClick={() => handleEdit(income)}>Edit</Button>
+                        <Button variant='ghost' size='sm' className='text-destructive' onClick={() => handleDelete(income.id)}>Delete</Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -218,9 +218,9 @@ export function SalaryPage() {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent className='sm:max-w-[425px]'>
             <DialogHeader>
-              <DialogTitle>{editingSalary ? 'Edit Salary' : 'Add Monthly Salary'}</DialogTitle>
+              <DialogTitle>{editingIncome ? 'Edit Income' : 'Add Monthly Income'}</DialogTitle>
               <DialogDescription>
-                {editingSalary ? 'Update your salary for this month.' : 'Set your income for a month.'}
+                {editingIncome ? 'Update your income for this month.' : 'Set your income for a month.'}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -265,7 +265,7 @@ export function SalaryPage() {
                   )}
                 />
                 <DialogFooter>
-                  <Button type='submit'>{editingSalary ? 'Update' : 'Add'} Salary</Button>
+                  <Button type='submit'>{editingIncome ? 'Update' : 'Add'} Income</Button>
                 </DialogFooter>
               </form>
             </Form>

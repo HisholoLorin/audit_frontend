@@ -22,7 +22,7 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedExpensesIndexRouteImport } from './routes/_authenticated/expenses/index'
-import { Route as AuthenticatedSalaryIndexRouteImport } from './routes/_authenticated/salary/index'
+import { Route as AuthenticatedincomeIndexRouteImport } from './routes/_authenticated/income/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 
@@ -94,10 +94,10 @@ const AuthenticatedExpensesIndexRoute =
     path: '/expenses/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedSalaryIndexRoute =
-  AuthenticatedSalaryIndexRouteImport.update({
-    id: '/salary/',
-    path: '/salary/',
+const AuthenticatedincomeIndexRoute =
+  AuthenticatedincomeIndexRouteImport.update({
+    id: '/income/',
+    path: '/income/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSettingsIndexRoute =
@@ -127,7 +127,7 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/expenses/': typeof AuthenticatedExpensesIndexRoute
-  '/salary/': typeof AuthenticatedSalaryIndexRoute
+  '/income/': typeof AuthenticatedincomeIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -143,7 +143,7 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/expenses': typeof AuthenticatedExpensesIndexRoute
-  '/salary': typeof AuthenticatedSalaryIndexRoute
+  '/income': typeof AuthenticatedincomeIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -162,7 +162,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/_authenticated/expenses/': typeof AuthenticatedExpensesIndexRoute
-  '/_authenticated/salary/': typeof AuthenticatedSalaryIndexRoute
+  '/_authenticated/income/': typeof AuthenticatedincomeIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -181,7 +181,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/categories/'
     | '/expenses/'
-    | '/salary/'
+    | '/income/'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -197,7 +197,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/categories'
     | '/expenses'
-    | '/salary'
+    | '/income'
     | '/settings'
   id:
     | '__root__'
@@ -215,7 +215,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/appearance'
     | '/_authenticated/categories/'
     | '/_authenticated/expenses/'
-    | '/_authenticated/salary/'
+    | '/_authenticated/income/'
     | '/_authenticated/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -323,11 +323,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExpensesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/salary/': {
-      id: '/_authenticated/salary/'
-      path: '/salary'
-      fullPath: '/salary/'
-      preLoaderRoute: typeof AuthenticatedSalaryIndexRouteImport
+    '/_authenticated/income/': {
+      id: '/_authenticated/income/'
+      path: '/income'
+      fullPath: '/income/'
+      preLoaderRoute: typeof AuthenticatedincomeIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings/': {
@@ -369,7 +369,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
   AuthenticatedExpensesIndexRoute: typeof AuthenticatedExpensesIndexRoute
-  AuthenticatedSalaryIndexRoute: typeof AuthenticatedSalaryIndexRoute
+  AuthenticatedincomeIndexRoute: typeof AuthenticatedincomeIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -378,7 +378,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
   AuthenticatedExpensesIndexRoute: AuthenticatedExpensesIndexRoute,
-  AuthenticatedSalaryIndexRoute: AuthenticatedSalaryIndexRoute,
+  AuthenticatedincomeIndexRoute: AuthenticatedincomeIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
