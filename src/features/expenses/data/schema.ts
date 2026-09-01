@@ -13,5 +13,6 @@ export interface Expense {
   description: string
   category: number | null
   category_name: string
+  category_color: string | null
   created_at: string
 }

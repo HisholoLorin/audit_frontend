@@ -61,7 +61,17 @@ export function ExpenseTable({ data, loading, onEdit, onDelete }: ExpenseTablePr
                 })}
               </TableCell>
               <TableCell className='font-medium'>{expense.title}</TableCell>
-              <TableCell>{expense.category_name || 'Uncategorized'}</TableCell>
+              <TableCell>
+                <span className='flex items-center gap-2'>
+                  {expense.category_color && (
+                    <span
+                      className='inline-block h-3 w-3 rounded-full shrink-0'
+                      style={{ backgroundColor: expense.category_color }}
+                    />
+                  )}
+                  {expense.category_name || 'Uncategorized'}
+                </span>
+              </TableCell>
               <TableCell className='text-right font-medium'>
                 {formatCurrency(expense.amount)}
               </TableCell>
