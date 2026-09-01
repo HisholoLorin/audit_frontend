@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { IndianRupee, TrendingDown, Wallet, Tags } from 'lucide-react'
+import { IndianRupee, TrendingDown, Landmark, Tags } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -16,9 +16,10 @@ import { Overview } from './components/overview'
 import { RecentExpenses } from './components/recent-expenses'
 
 interface DashboardData {
-  current_month_salary: number
+  opening_balance: number
+  closing_balance: number
+  credited_this_month: number
   total_expenses: number
-  remaining_balance: number
   category_count: number
   expenses_by_category: Array<{
     category_name: string
@@ -85,16 +86,16 @@ export function Dashboard() {
             <Card>
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                 <CardTitle className='text-sm font-medium'>
-                  Monthly Salary
+                  Opening Balance
                 </CardTitle>
-                <Wallet className='h-4 w-4 text-muted-foreground' />
+                <Landmark className='h-4 w-4 text-muted-foreground' />
               </CardHeader>
               <CardContent>
                 <div className='text-2xl font-bold'>
-                  {loading ? '...' : formatCurrency(data?.current_month_salary ?? 0)}
+                  {loading ? '...' : formatCurrency(data?.opening_balance ?? 0)}
                 </div>
                 <p className='text-xs text-muted-foreground'>
-                  Current month's income
+                  Balance carried from last month
                 </p>
               </CardContent>
             </Card>
@@ -117,16 +118,16 @@ export function Dashboard() {
             <Card>
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                 <CardTitle className='text-sm font-medium'>
-                  Remaining Balance
+                  Closing Balance
                 </CardTitle>
                 <IndianRupee className='h-4 w-4 text-muted-foreground' />
               </CardHeader>
               <CardContent>
                 <div className='text-2xl font-bold'>
-                  {loading ? '...' : formatCurrency(data?.remaining_balance ?? 0)}
+                  {loading ? '...' : formatCurrency(data?.closing_balance ?? 0)}
                 </div>
                 <p className='text-xs text-muted-foreground'>
-                  Available to spend
+                  After expenses &amp; credited salary
                 </p>
               </CardContent>
             </Card>
