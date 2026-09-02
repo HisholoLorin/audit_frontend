@@ -48,12 +48,14 @@ interface Income {
   id: number
   amount: number
   month: string
+  source: string
   notes: string
 }
 
 const formSchema = z.object({
   amount: z.string().min(1, 'Amount is required'),
   month: z.string().min(1, 'Month is required'),
+  source: z.string().optional(),
   notes: z.string().optional(),
 })
 
@@ -68,6 +70,7 @@ export function IncomePage() {
     defaultValues: {
       amount: '',
       month: new Date().toISOString().slice(0, 7),
+      source: '',
       notes: '',
     },
   })
@@ -92,6 +95,7 @@ export function IncomePage() {
     form.reset({
       amount: '',
       month: new Date().toISOString().slice(0, 7),
+      source: '',
       notes: '',
     })
     setDialogOpen(true)
@@ -102,6 +106,7 @@ export function IncomePage() {
     form.reset({
       amount: String(income.amount),
       month: income.month.slice(0, 7),
+      source: income.source || '',
       notes: income.notes || '',
     })
     setDialogOpen(true)
@@ -121,6 +126,7 @@ export function IncomePage() {
     const payload = {
       amount: parseFloat(data.amount),
       month: `${data.month}-01`,
+      source: data.source || '',
       notes: data.notes || '',
     }
 
@@ -183,6 +189,7 @@ export function IncomePage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Month</TableHead>
+                    <TableHead>Source</TableHead>
                     <TableHead className='text-right'>Amount</TableHead>
                     <TableHead>Notes</TableHead>
                     <TableHead className='text-right'>Actions</TableHead>
@@ -196,6 +203,9 @@ export function IncomePage() {
                           month: 'long',
                           year: 'numeric',
                         })}
+                      </TableCell>
+                      <TableCell className='text-muted-foreground'>
+                        {income.source || <span className='italic'>—</span>}
                       </TableCell>
                       <TableCell className='text-right font-medium'>
                         {formatCurrency(income.amount)}
@@ -233,6 +243,19 @@ export function IncomePage() {
                       <FormLabel>Month</FormLabel>
                       <FormControl>
                         <Input type='month' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='source'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Source (optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder='e.g. Salary, Freelance, Bonus' {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
