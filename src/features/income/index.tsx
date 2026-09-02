@@ -1,8 +1,9 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus } from 'lucide-react'
+import { format } from 'date-fns'
+import { Plus, MoreHorizontal, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import api from '@/lib/api'
 import { Button } from '@/components/ui/button'
@@ -43,6 +44,18 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  SearchFilterSort,
+  applySortAndFilter,
+  type SortState,
+} from '@/components/search-filter-sort'
+import { MonthPicker } from '@/components/month-picker'
 
 interface Income {
   id: number
@@ -59,11 +72,22 @@ const formSchema = z.object({
   notes: z.string().optional(),
 })
 
+const SORT_OPTIONS = [
+  { label: 'Month', value: 'month' },
+  { label: 'Source', value: 'source' },
+  { label: 'Amount', value: 'amount' },
+]
+
 export function IncomePage() {
   const [incomes, setIncomes] = useState<Income[]>([])
   const [loading, setLoading] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingIncome, setEditingIncome] = useState<Income | null>(null)
+
+  // Search & sort state
+  const [search, setSearch] = useState('')
+  const [sort, setSort] = useState<SortState>({ field: 'month', direction: 'desc' })
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,18 +101,24 @@ export function IncomePage() {
 
   const fetchIncomes = useCallback(async () => {
     try {
-      const response = await api.get('/income/')
+      const monthStr = format(currentMonth, 'yyyy-MM')
+      const response = await api.get('/income/', { params: { month: monthStr } })
       setIncomes(response.data.results || response.data)
     } catch {
       toast.error('Failed to fetch income data')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [currentMonth])
 
   useEffect(() => {
     fetchIncomes()
   }, [fetchIncomes])
+
+  // Apply search and sort
+  const filteredIncomes = useMemo(() => {
+    return applySortAndFilter(incomes, search, ['source', 'notes', 'month'], sort)
+  }, [incomes, search, sort])
 
   const handleAddNew = () => {
     setEditingIncome(null)
@@ -172,6 +202,18 @@ export function IncomePage() {
           </Button>
         </div>
 
+        <SearchFilterSort
+          searchPlaceholder='Search income…'
+          searchValue={search}
+          onSearchChange={setSearch}
+          sortOptions={SORT_OPTIONS}
+          sort={sort}
+          onSortChange={setSort}
+          descLabel='Newest First'
+          ascLabel='Oldest First'
+          rightContent={<MonthPicker date={currentMonth} onChange={setCurrentMonth} />}
+        />
+
         <Card>
           <CardHeader>
             <CardTitle>Income History</CardTitle>
@@ -180,9 +222,11 @@ export function IncomePage() {
           <CardContent>
             {loading ? (
               <div className='text-center py-8 text-muted-foreground'>Loading...</div>
-            ) : incomes.length === 0 ? (
+            ) : filteredIncomes.length === 0 ? (
               <div className='text-center py-8 text-muted-foreground'>
-                No income entries yet. Click "Add Income" to set your monthly income.
+                {incomes.length === 0
+                  ? 'No income entries yet. Click "Add Income" to set your monthly income.'
+                  : 'No income entries match your search.'}
               </div>
             ) : (
               <Table>
@@ -196,7 +240,7 @@ export function IncomePage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {incomes.map((income) => (
+                  {filteredIncomes.map((income) => (
                     <TableRow key={income.id}>
                       <TableCell>
                         {new Date(income.month).toLocaleDateString('en-IN', {
@@ -214,8 +258,27 @@ export function IncomePage() {
                         {income.notes || '-'}
                       </TableCell>
                       <TableCell className='text-right'>
-                        <Button variant='ghost' size='sm' onClick={() => handleEdit(income)}>Edit</Button>
-                        <Button variant='ghost' size='sm' className='text-destructive' onClick={() => handleDelete(income.id)}>Delete</Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant='ghost' size='icon'>
+                              <MoreHorizontal className='h-4 w-4' />
+                              <span className='sr-only'>Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align='end'>
+                            <DropdownMenuItem onClick={() => handleEdit(income)}>
+                              <Edit className='mr-2 h-4 w-4' />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              variant='destructive'
+                              onClick={() => handleDelete(income.id)}
+                            >
+                              <Trash2 className='mr-2 h-4 w-4' />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}

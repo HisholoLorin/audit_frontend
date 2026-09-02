@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Plus, Edit, Trash2 } from 'lucide-react'
+import { Plus, MoreHorizontal, Edit, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import api from '@/lib/api'
 import { Button } from '@/components/ui/button'
@@ -42,6 +42,12 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface Category {
   id: number
@@ -170,12 +176,27 @@ export function Categories() {
                       </TableCell>
                       <TableCell className='font-medium'>{cat.name}</TableCell>
                       <TableCell className='text-right'>
-                        <Button variant='ghost' size='icon' onClick={() => handleEdit(cat)}>
-                          <Edit className='h-4 w-4' />
-                        </Button>
-                        <Button variant='ghost' size='icon' onClick={() => handleDelete(cat.id)}>
-                          <Trash2 className='h-4 w-4 text-destructive' />
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant='ghost' size='icon'>
+                              <MoreHorizontal className='h-4 w-4' />
+                              <span className='sr-only'>Actions</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align='end'>
+                            <DropdownMenuItem onClick={() => handleEdit(cat)}>
+                              <Edit className='mr-2 h-4 w-4' />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              variant='destructive'
+                              onClick={() => handleDelete(cat.id)}
+                            >
+                              <Trash2 className='mr-2 h-4 w-4' />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}
