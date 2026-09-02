@@ -9,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { type Expense, type BreakdownCluster, type ExpenseBreakdown } from '../data/schema'
+import { type Expense } from '../data/schema'
 
 interface ClusterItem {
   id?: number
