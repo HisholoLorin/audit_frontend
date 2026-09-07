@@ -331,11 +331,22 @@ export function ExpenseTable({
                 )}
 
                 {/* Expanded cluster breakdown */}
-                {isExpanded && hasClusters && !isBreakdown && (
+                {isExpanded && hasClusters && !isBreakdown && (() => {
+                  const grandTotal = expense.clusters.reduce(
+                    (sum, c) => sum + c.items.reduce((s, item) => s + Number(item.amount), 0),
+                    0
+                  )
+                  const remainingBalance = expense.amount - grandTotal
+
+                  return (
                   <TableRow key={`expanded-${expense.id}`} className='bg-muted/30'>
                     <TableCell colSpan={5} className='px-4 py-3'>
                       <div className='ml-6 space-y-4'>
-                        {expense.clusters.map((cluster) => (
+                        {expense.clusters.map((cluster) => {
+                          const clusterTotal = cluster.items.reduce(
+                            (sum, item) => sum + Number(item.amount), 0
+                          )
+                          return (
                           <div key={cluster.id}>
                             <div className='mb-1.5 flex items-center gap-2'>
                               <span className='text-sm font-medium'>{cluster.name}</span>
@@ -366,14 +377,41 @@ export function ExpenseTable({
                                     </span>
                                   </div>
                                 ))}
+                                {/* Cluster subtotal */}
+                                <div className='grid grid-cols-[1fr_100px_100px] gap-2 text-sm border-t mt-1 pt-1'>
+                                  <span className='font-medium text-muted-foreground'>Total</span>
+                                  <span className='text-right font-semibold'>{formatCurrency(clusterTotal)}</span>
+                                  <span />
+                                </div>
                               </div>
                             )}
                           </div>
-                        ))}
+                          )
+                        })}
+
+                        {/* Grand total & remaining balance */}
+                        <div className='border-t pt-2 space-y-1'>
+                          <div className='grid grid-cols-[1fr_100px_100px] gap-2 text-sm'>
+                            <span className='font-semibold'>Grand Total</span>
+                            <span className='text-right font-bold'>{formatCurrency(grandTotal)}</span>
+                            <span />
+                          </div>
+                          <div className='grid grid-cols-[1fr_100px_100px] gap-2 text-sm'>
+                            <span className='font-semibold'>Remaining Balance</span>
+                            <span className={cn(
+                              'text-right font-bold',
+                              remainingBalance >= 0 ? 'text-green-600' : 'text-red-600'
+                            )}>
+                              {formatCurrency(remainingBalance)}
+                            </span>
+                            <span />
+                          </div>
+                        </div>
                       </div>
                     </TableCell>
                   </TableRow>
-                )}
+                  )
+                })()}
               </>
             )
           })}

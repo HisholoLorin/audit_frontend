@@ -23,13 +23,13 @@ export function Overview({ data, loading }: OverviewProps) {
       <BarChart data={data}>
         <XAxis
           dataKey='month'
-          stroke='#888888'
+          stroke='var(--color-muted-foreground)'
           fontSize={12}
           tickLine={false}
           axisLine={false}
         />
         <YAxis
-          stroke='#888888'
+          stroke='var(--color-muted-foreground)'
           fontSize={12}
           tickLine={false}
           axisLine={false}
@@ -43,18 +43,28 @@ export function Overview({ data, loading }: OverviewProps) {
               maximumFractionDigits: 0,
             }).format(value)
           }
+          contentStyle={{
+            backgroundColor: 'var(--color-popover)',
+            borderColor: 'var(--color-border)',
+            borderRadius: 'var(--radius)',
+            color: 'var(--color-popover-foreground)',
+          }}
+          labelStyle={{ color: 'var(--color-popover-foreground)' }}
+          itemStyle={{ color: 'var(--color-popover-foreground)' }}
         />
-        <Legend />
+        <Legend
+          wrapperStyle={{ color: 'var(--color-foreground)' }}
+        />
         <Bar
           dataKey='income'
           name='Income'
-          fill='hsl(var(--primary))'
+          fill='var(--color-chart-2)'
           radius={[4, 4, 0, 0]}
         />
         <Bar
           dataKey='total_expenses'
           name='Expenses'
-          fill='hsl(var(--destructive))'
+          fill='var(--color-chart-5)'
           radius={[4, 4, 0, 0]}
         />
       </BarChart>

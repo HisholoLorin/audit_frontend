@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { format } from 'date-fns'
-import { Plus } from 'lucide-react'
+import { Plus, FileDown } from 'lucide-react'
 import { toast } from 'sonner'
 import api from '@/lib/api'
 import { Button } from '@/components/ui/button'
@@ -156,6 +156,32 @@ export function Expenses() {
     }
   }
 
+  const [downloadingReport, setDownloadingReport] = useState(false)
+
+  const handleDownloadReport = async () => {
+    try {
+      setDownloadingReport(true)
+      const monthStr = format(currentMonth, 'yyyy-MM')
+      const response = await api.get('/reports/expenses/', {
+        params: { month: monthStr },
+        responseType: 'blob',
+      })
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `expense_report_${monthStr}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+      toast.success('Report downloaded successfully')
+    } catch {
+      toast.error('Failed to download report')
+    } finally {
+      setDownloadingReport(false)
+    }
+  }
+
   const breakdownExpense = breakdownExpenseId
     ? expenses.find((e) => e.id === breakdownExpenseId) || null
     : null
@@ -173,10 +199,20 @@ export function Expenses() {
       <Main>
         <div className='mb-4 flex items-center justify-between'>
           <h1 className='text-2xl font-bold tracking-tight'>Expenses</h1>
-          <Button onClick={() => setShowCreateForm(true)} disabled={showCreateForm}>
-            <Plus className='mr-2 h-4 w-4' />
-            Add Expense
-          </Button>
+          <div className='flex items-center gap-2'>
+            <Button
+              variant='outline'
+              onClick={handleDownloadReport}
+              disabled={downloadingReport}
+            >
+              <FileDown className='mr-2 h-4 w-4' />
+              {downloadingReport ? 'Downloading…' : 'Download Report'}
+            </Button>
+            <Button onClick={() => setShowCreateForm(true)} disabled={showCreateForm}>
+              <Plus className='mr-2 h-4 w-4' />
+              Add Expense
+            </Button>
+          </div>
         </div>
 
         <SearchFilterSort

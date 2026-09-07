@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { IndianRupee, TrendingDown, Landmark, Tags } from 'lucide-react'
+import { IndianRupee, TrendingDown, TrendingUp, Landmark, Tags } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ import { RecentExpenses } from './components/recent-expenses'
 interface DashboardData {
   opening_balance: number
   closing_balance: number
-  credited_this_month: number
+  current_balance: number
   total_expenses: number
   category_count: number
   expenses_by_category: Array<{
@@ -82,7 +82,7 @@ export function Dashboard() {
         </div>
 
         <div className='space-y-4'>
-          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
             <Card>
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                 <CardTitle className='text-sm font-medium'>
@@ -96,6 +96,22 @@ export function Dashboard() {
                 </div>
                 <p className='text-xs text-muted-foreground'>
                   Balance carried from last month
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
+                  Current Balance
+                </CardTitle>
+                <TrendingUp className='h-4 w-4 text-muted-foreground' />
+              </CardHeader>
+              <CardContent>
+                <div className='text-2xl font-bold'>
+                  {loading ? '...' : formatCurrency(data?.current_balance ?? 0)}
+                </div>
+                <p className='text-xs text-muted-foreground'>
+                  Income entered this month
                 </p>
               </CardContent>
             </Card>
@@ -127,7 +143,7 @@ export function Dashboard() {
                   {loading ? '...' : formatCurrency(data?.closing_balance ?? 0)}
                 </div>
                 <p className='text-xs text-muted-foreground'>
-                  After expenses &amp; credited income
+                  Opening + Current − Expenses
                 </p>
               </CardContent>
             </Card>
